@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>zjon</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--g:#00e676;--bg:#0a0a0a;--card:#151515;--line:#2a2a2a;--mut:#9a9a9a;--r:18px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:#fff;font-family:'Outfit',system-ui,sans-serif;width:100%;min-height:100dvh;overflow-x:hidden}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+button,input,select,textarea{font:inherit;color:inherit;border:0;outline:0;background:none}
+button{cursor:pointer}
+.ic{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(12px + env(safe-area-inset-top)) 14px 10px;border-bottom:2px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px}
+.logo{font-weight:900;font-size:28px;letter-spacing:-1.5px;color:var(--g);user-select:none;cursor:pointer}
+.search{flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:0 14px;height:44px}
+.search:focus-within{border-color:var(--g)}
+.search input{flex:1;min-width:0}
+.sq{width:44px;height:44px;border-radius:14px;background:#000;border:2px solid var(--line);display:grid;place-items:center;position:relative}
+.dot{position:absolute;top:-6px;right:-6px;background:var(--g);color:#000;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 4px}
+main{padding:14px}
+.slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;scrollbar-width:none}
+.slider::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;border-radius:24px;padding:22px;min-height:160px;display:flex;flex-direction:column;justify-content:center;gap:6px;border:2px solid #000;background-size:cover;background-position:center;position:relative;overflow:hidden}
+.slide-content{position:relative;z-index:2}
+.slide h2{font-size:30px;line-height:.95;font-weight:900;letter-spacing:-1.5px}
+.slide p{font-weight:600;font-size:14px;margin-top:4px}
+.slide.has-bg::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:1}
+.s1{background-color:var(--g);color:#000}
+.s2{background-color:#fff;color:#000}
+.s3{background-color:#161616;border-color:var(--g);color:#fff}
+.s3 h2{color:var(--g)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:16px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 16px;border-radius:999px;border:2px solid var(--line);font-weight:600;font-size:14px;background:var(--card)}
+.chip.on{background:var(--g);border-color:var(--g);color:#000}
+.sec{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+.sec h3{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+.sec select{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px}
+.sec option{background:#000}
+.timer{display:flex;gap:4px;font-weight:800;font-size:13px}
+.timer span{background:var(--g);color:#000;border-radius:8px;padding:3px 7px}
+.flash{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.flash::-webkit-scrollbar{display:none}
+.flash .card{flex:0 0 150px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);border:2px solid var(--line);border-radius:var(--r);overflow:hidden;position:relative;transition:transform .15s,box-shadow .15s}
+.card:active{transform:translate(2px,2px)}
+.card:hover{border-color:var(--g);box-shadow:4px 4px 0 var(--g)}
+.card .im{aspect-ratio:1/1.1;background:#222 center/cover no-repeat;cursor:pointer}
+.card .b{padding:10px}
+.card .t{font-size:14px;font-weight:600;line-height:1.25;height:35px;overflow:hidden}
+.price{font-weight:900;font-size:17px;color:var(--g);margin-top:6px}
+.old{color:var(--mut);font-size:12px;text-decoration:line-through;margin-left:6px;font-weight:400}
+.meta{color:var(--mut);font-size:12px;margin-top:3px}
+.badge{position:absolute;top:8px;left:8px;background:var(--g);color:#000;font-weight:800;font-size:12px;padding:3px 8px;border-radius:8px}
+.wish{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;background:#000;display:grid;place-items:center}
+.wish.on .ic{fill:var(--g);stroke:var(--g)}
+.btn{background:var(--g);color:#000;font-weight:800;border-radius:14px;padding:14px 18px;width:100%;border:2px solid #000;box-shadow:4px 4px 0 #fff;transition:.12s;font-size:16px}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #fff}
+.btn.alt{background:#000;color:#fff;border-color:var(--line);box-shadow:none}
+.btn.sm{width:auto;padding:9px 14px;font-size:14px;box-shadow:none}
+.btn.red{background:#ff3b3b;color:#fff;box-shadow:none}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:720px;background:#000;border-top:2px solid var(--line);display:flex;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:30}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--mut);padding:6px 0;border-radius:14px;position:relative}
+nav button .ic{opacity:.6}
+nav button.on{color:var(--g)}
+nav button.on .ic{opacity:1}
+nav button.on::before{content:"";position:absolute;top:-8px;width:28px;height:3px;background:var(--g);border-radius:3px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:70;display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.sheet{background:var(--bg);border:2px solid var(--line);border-bottom:0;border-radius:28px 28px 0 0;width:100%;max-width:720px;max-height:92vh;overflow:auto;padding-bottom:env(safe-area-inset-bottom)}
+.sheet .hero{aspect-ratio:1/.9;background:#222 center/cover no-repeat;position:relative}
+.sheet .viewer{position:relative;background:#000}
+.sheet .viewer img{width:100%;display:block}
+.x{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;background:#000;display:grid;place-items:center}
+.pad{padding:16px}
+.sizes{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.size{min-width:48px;padding:9px 12px;border:2px solid var(--line);border-radius:12px;font-weight:700;text-align:center}
+.size.on{background:#fff;color:#000;border-color:#fff}
+.row{display:flex;gap:10px;align-items:center}
+.qty{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:12px;padding:4px}
+.qty button{width:32px;height:32px;border-radius:99px;background:#000;font-weight:800;font-size:18px}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-size:13px;color:var(--mut);margin-bottom:5px;font-weight:600}
+.field input,.field textarea,.field select{width:100%;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:13px 14px}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--g)}
+.field select option{background:#000}
+.item{display:flex;gap:12px;background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:10px;margin-bottom:10px}
+.item .th{width:84px;height:84px;border-radius:12px;background:#222 center/cover;flex:none}
+.item .info{flex:1;min-width:0}
+.empty{text-align:center;color:var(--mut);padding:50px 20px;font-weight:600}
+.empty .ic{width:46px;height:46px;opacity:.5;margin-bottom:10px}
+.total{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin:14px 0}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:50vh;padding-bottom:10px}
+.msg{max-width:80%;padding:10px 14px;border-radius:18px;font-size:15px;word-wrap:break-word}
+.msg.me{align-self:flex-end;background:var(--g);color:#000;border-bottom-right-radius:4px}
+.msg.them{align-self:flex-start;background:var(--card);border:2px solid var(--line);border-bottom-left-radius:4px}
+.msg-img{max-width:100%;border-radius:12px;margin-top:4px;display:block;cursor:pointer}
+.compose{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom));display:flex;gap:8px;background:var(--bg);padding:8px 0;align-items:center}
+.compose input[type=text]{flex:1;min-width:0;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:0 16px;height:48px}
+.compose input[type=text]:focus{border-color:var(--g)}
+.compose button,.compose label.cam-btn{width:48px;height:48px;border-radius:50%;background:#000;border:2px solid var(--line);display:grid;place-items:center;flex:none;cursor:pointer}
+.compose button.send-btn{border-color:var(--g)}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-120px);background:var(--g);color:#000;font-weight:800;padding:12px 20px;border-radius:999px;z-index:99;transition:.3s;border:2px solid #000;max-width:90%;text-align:center}
+#toast.show{transform:translate(-50%,0)}
+#admin{position:fixed;inset:0;background:var(--bg);z-index:60;overflow:auto;display:none}
+#admin.show{display:block}
+.adm{max-width:720px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
+.tabs{display:flex;gap:8px;margin:14px 0;overflow-x:auto}
+.tabs .chip{display:flex;gap:6px;align-items:center}
+.tabs .chip .ic{width:18px;height:18px}
+.tabs .chip.on .ic{stroke:#000}
+.up{border:2px dashed var(--line);border-radius:var(--r);min-height:150px;display:grid;place-items:center;text-align:center;color:var(--mut);background:#222 center/cover no-repeat;cursor:pointer;margin-bottom:12px;font-weight:600}
+.pill{display:inline-block;background:#000;border:2px solid var(--line);padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-right:4px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .box{width:100%;max-width:380px}
+.thread{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px;cursor:pointer}
+.av{width:44px;height:44px;border-radius:50%;background:var(--g);color:#000;display:grid;place-items:center;font-weight:900;flex:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+</defs></svg>
+
+<header>
+  <div class="top">
+    <div class="logo" onclick="onLogoClick()">zjon</div>
+    <label class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Search pants, shirts..." autocomplete="off"></label>
+    <button class="sq" onclick="go('cart')" aria-label="Cart"><svg class="ic"><use href="#i-cart"/></svg><span class="dot" id="cdot" style="display:none">0</span></button>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<nav>
+  <button data-v="home" onclick="go('home')"><svg class="ic"><use href="#i-home"/></svg>Home</button>
+  <button data-v="wish" onclick="go('wish')"><svg class="ic"><use href="#i-heart"/></svg>Saved</button>
+  <button data-v="cart" onclick="go('cart')"><svg class="ic"><use href="#i-cart"/></svg>Cart</button>
+  <button data-v="chat" onclick="go('chat')"><svg class="ic"><use href="#i-chat"/></svg>Chat</button>
+</nav>
+
+<div class="overlay" id="ov" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div>
+<div id="admin"></div>
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+/* ===== Firebase config ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCtDeV1-P0aspnJfTiPAeVVfhATJr8aE9Q",
+  authDomain: "zjon-81845.firebaseapp.com",
+  databaseURL: "https://zjon-81845-default-rtdb.firebaseio.com",
+  projectId: "zjon-81845",
+  storageBucket: "zjon-81845.firebasestorage.app",
+  messagingSenderId: "586339742938",
+  appId: "1:586339742938:web:6f6f403d101be7a027e1e3"
+};
+/* =========================== */
+
+const ADMIN_USER = "z1_159", ADMIN_PASS = "mdnayem159";
+const CATS = ["All","Pants","Shirts","T-Shirts","Jeans","Hoodies","Joggers"];
+const SIZES = ["S","M","L","XL","XXL"];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ic = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
+const money = n => "Tk " + Number(n || 0).toLocaleString("en-US");
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+let db = null;
+try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch (e) { console.error(e); }
+
+let products = [], ads = [], cart = load("zj_cart", []), wish = load("zj_wish", []);
+let view = "home", cat = "All", q = "", sortBy = "new", chatMsgs = [];
+let threadRef = null;
+let uid = localStorage.getItem("zj_uid");
+if (!uid) { uid = "u" + Math.random().toString(36).slice(2, 10); localStorage.setItem("zj_uid", uid); }
+
+/* Hidden admin trigger: tap the logo 5 times */
+let logoClicks = 0, logoTimer;
+function onLogoClick() {
+  logoClicks++;
+  clearTimeout(logoTimer);
+  if (logoClicks >= 5) { logoClicks = 0; openAdmin(); }
+  else logoTimer = setTimeout(() => { logoClicks = 0; go("home"); }, 1200);
+}
+
+function toast(t) {
+  const el = $("#toast"); el.textContent = t; el.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 2400);
+}
+
+/* Admin helpers */
+function adminOpen() { return $("#admin").classList.contains("show") && sessionStorage.getItem("zj_adm"); }
+function refreshAdminList(tab) {
+  if (!adminOpen() || aTab !== tab || aChat) return;
+  const ids = tab === "products" ? ["pT", "pC", "pP", "pO"] : ["adT", "adS"];
+  if (ids.some(i => ($("#" + i) || {}).value) || (tab === "products" ? aImg : aAdImg)) return;
+  drawTab();
+}
+
+/* Realtime connection status and errors */
+function dbError(err) {
+  console.error(err);
+  toast(err && err.code === "PERMISSION_DENIED" ? "Database rules are blocking access" : "Database connection error");
+}
+let wasOnline = null;
+/* Realtime listeners */
+if (db) {
+  db.ref(".info/connected").on("value", s => {
+    const on = s.val() === true;
+    if (wasOnline === true && !on) toast("Connection lost, reconnecting...");
+    if (wasOnline === false && on) toast("Back online");
+    if (wasOnline === null && !on) setTimeout(() => { if (wasOnline !== true) toast("Connecting to database..."); }, 4000);
+    wasOnline = on;
+  });
+  db.ref("products").on("value", s => {
+    const v = s.val() || {};
+    products = Object.entries(v).map(([id, p]) => ({ id, ...p })).sort((a, b) => b.ts - a.ts);
+    if (view === "home") renderGrid(); else if (view === "cart" || view === "wish") render();
+    refreshAdminList("products");
+  }, dbError);
+  db.ref("ads").on("value", s => {
+    const v = s.val() || {};
+    ads = Object.entries(v).map(([id, a]) => ({ id, ...a })).sort((a, b) => b.ts - a.ts);
+    if (view === "home") renderSlider();
+    refreshAdminList("ads");
+  }, dbError);
+  db.ref("chats/" + uid).on("value", s => {
+    chatMsgs = Object.values(s.val() || {}).sort((a, b) => a.ts - b.ts);
+    if (view === "chat") renderChat();
+  }, dbError);
+} else toast("Firebase is not configured");
+
+/* Navigation */
+function go(v) { view = v; render(); window.scrollTo(0, 0); }
+function render() {
+  document.querySelectorAll("nav button[data-v]").forEach(b => b.classList.toggle("on", b.dataset.v === view));
+  const n = cart.reduce((a, c) => a + c.qty, 0);
+  const d = $("#cdot"); d.style.display = n ? "grid" : "none"; d.textContent = n;
+  if (view === "home") renderHome();
+  else if (view === "wish") renderWish();
+  else if (view === "cart") renderCart();
+  else renderChat();
+}
+
+/* Home */
+function renderHome() {
+  $("#main").innerHTML = `
+  <div class="slider" id="slider"></div>
+  <div class="chips">${CATS.map(c => `<button class="chip ${c === cat ? "on" : ""}" onclick="setCat('${c}')">${c}</button>`).join("")}</div>
+  <div id="flashWrap"></div>
+  <div class="sec"><h3>Just for you</h3>
+    <select onchange="sortBy=this.value;renderGrid()">
+      <option value="new" ${sortBy === "new" ? "selected" : ""}>Newest</option>
+      <option value="low" ${sortBy === "low" ? "selected" : ""}>Price: low</option>
+      <option value="high" ${sortBy === "high" ? "selected" : ""}>Price: high</option>
+    </select></div>
+  <div class="grid" id="grid"></div>`;
+  renderSlider();
+  renderGrid();
+  startSlider();
+}
+
+function renderSlider() {
+  const s = $("#slider"); if (!s) return;
+  if (!ads.length) {
+    s.innerHTML = `
+      <div class="slide s1"><div class="slide-content"><h2>NEW DROP<br>PANTS &amp; SHIRTS</h2><p>Fresh fits every week</p></div></div>
+      <div class="slide s2"><div class="slide-content"><h2>FREE<br>DELIVERY</h2><p>On your first order</p></div></div>
+      <div class="slide s3"><div class="slide-content"><h2>FLASH<br>SALE LIVE</h2><p>Grab it before midnight</p></div></div>`;
+    return;
+  }
+  s.innerHTML = ads.map((a, i) => `
+    <div class="slide ${a.img ? "has-bg" : "s" + ((i % 3) + 1)}" style="${a.img ? `background-image:url('${a.img}')` : ""}">
+      <div class="slide-content">
+        <h2>${esc(a.title || "SPECIAL OFFER")}</h2>
+        <p>${esc(a.sub || "")}</p>
+      </div>
+    </div>`).join("");
+}
+
+function setCat(c) { cat = c; renderHome(); }
+let sliderT;
+function startSlider() {
+  clearInterval(sliderT);
+  sliderT = setInterval(() => {
+    const s = $("#slider"); if (!s) return clearInterval(sliderT);
+    const w = s.clientWidth + 10;
+    s.scrollTo({ left: s.scrollLeft + w >= s.scrollWidth - 5 ? 0 : s.scrollLeft + w, behavior: "smooth" });
+  }, 3500);
+}
+function disc(p) { return p.old && p.old > p.price ? Math.round((1 - p.price / p.old) * 100) : 0; }
+function cardHTML(p) {
+  const d = disc(p), w = wish.includes(p.id);
+  return `<div class="card">
+    ${d ? `<span class="badge">-${d}%</span>` : ""}
+    <button class="wish ${w ? "on" : ""}" onclick="toggleWish('${p.id}')" aria-label="Save">${ic("heart")}</button>
+    <div class="im" style="background-image:url('${p.img}')" onclick="openProduct('${p.id}')"></div>
+    <div class="b" onclick="openProduct('${p.id}')">
+      <div class="t">${esc(p.title)}</div>
+      <div class="price">${money(p.price)}${d ? `<span class="old">${money(p.old)}</span>` : ""}</div>
+      <div class="meta">${esc(p.cat)}</div>
+    </div></div>`;
+}
+function renderGrid() {
+  const g = $("#grid"); if (!g) return;
+  let list = products.filter(p => (cat === "All" || p.cat === cat) && (!q || (p.title + " " + (p.cap||"") + " " + p.cat).toLowerCase().includes(q)));
+  if (sortBy === "low") list.sort((a, b) => a.price - b.price);
+  if (sortBy === "high") list.sort((a, b) => b.price - a.price);
+  g.innerHTML = list.length ? list.map(cardHTML).join("") : `<div class="empty" style="grid-column:1/-1">${ic("box")}<br>No products found</div>`;
+  const fl = products.filter(disc).slice(0, 8);
+  const fw = $("#flashWrap");
+  if (fw) fw.innerHTML = fl.length ? `<div class="sec"><h3>${ic("bolt")} Flash sale</h3><div class="timer" id="tm"></div></div><div class="flash">${fl.map(cardHTML).join("")}</div>` : "";
+  tick();
+}
+function tick() {
+  const el = $("#tm"); if (!el) return;
+  const e = new Date(); e.setHours(23, 59, 59, 999);
+  let s = Math.max(0, Math.floor((e - new Date()) / 1000));
+  const p = n => String(n).padStart(2, "0");
+  el.innerHTML = `<span>${p(Math.floor(s / 3600))}</span><span>${p(Math.floor(s % 3600 / 60))}</span><span>${p(s % 60)}</span>`;
+}
+setInterval(tick, 1000);
+$("#q").addEventListener("input", e => { q = e.target.value.trim().toLowerCase(); if (view !== "home") go("home"); else renderGrid(); });
+
+/* Wishlist */
+function toggleWish(id) {
+  wish = wish.includes(id) ? wish.filter(x => x !== id) : [...wish, id];
+  save("zj_wish", wish);
+  if (view === "home") renderGrid(); else render();
+}
+function renderWish() {
+  const l = products.filter(p => wish.includes(p.id));
+  $("#main").innerHTML = `<div class="sec"><h3>Saved items</h3></div>` + (l.length ? `<div class="grid">${l.map(cardHTML).join("")}</div>` : `<div class="empty">${ic("heart")}<br>Tap the heart on any product to save it</div>`);
+}
+
+/* Product sheet */
+let sel = { id: null, size: "M", qty: 1 };
+function openProduct(id) {
+  const p = products.find(x => x.id === id); if (!p) return;
+  sel = { id, size: "M", qty: 1 }; drawSheet(p);
+  $("#ov").classList.add("show");
+}
+function drawSheet(p) {
+  const d = disc(p);
+  $("#sheet").innerHTML = `
+  <div class="hero" style="background-image:url('${p.img}')"><button class="x" onclick="closeSheet()" aria-label="Close">${ic("close")}</button></div>
+  <div class="pad">
+    <div class="price" style="font-size:26px;margin:0">${money(p.price)}${d ? `<span class="old">${money(p.old)}</span> <span class="pill" style="color:var(--g)">-${d}%</span>` : ""}</div>
+    <h2 style="margin:6px 0;font-size:22px">${esc(p.title)}</h2>
+    <span class="pill">${esc(p.cat)}</span>
+    <p style="color:#ccc;margin:12px 0;line-height:1.5;white-space:pre-wrap">${esc(p.cap)}</p>
+    <div style="font-weight:700">Size</div>
+    <div class="sizes">${SIZES.map(s => `<button class="size ${s === sel.size ? "on" : ""}" onclick="sel.size='${s}';drawSheet(products.find(x=>x.id==='${p.id}'))">${s}</button>`).join("")}</div>
+    <div class="row" style="justify-content:space-between;margin-bottom:16px">
+      <b>Quantity</b>
+      <div class="qty"><button onclick="sel.qty=Math.max(1,sel.qty-1);drawSheet(products.find(x=>x.id==='${p.id}'))">-</button><b>${sel.qty}</b><button onclick="sel.qty++;drawSheet(products.find(x=>x.id==='${p.id}'))">+</button></div>
+    </div>
+    <div class="row"><button class="btn alt" onclick="addCart(false)">Add to cart</button><button class="btn" onclick="addCart(true)">Buy now</button></div>
+  </div>`;
+}
+function closeSheet() { $("#ov").classList.remove("show"); }
+function viewImg(src) {
+  $("#sheet").innerHTML = `<div class="viewer"><img src="${src}" alt=""><button class="x" onclick="closeSheet()" aria-label="Close">${ic("close")}</button></div>`;
+  $("#ov").classList.add("show");
+}
+function addCart(now) {
+  const f = cart.find(c => c.id === sel.id && c.size === sel.size);
+  if (f) f.qty += sel.qty; else cart.push({ ...sel });
+  save("zj_cart", cart); closeSheet(); toast("Added to cart");
+  if (now) go("cart"); else render();
+}
+
+/* Cart & checkout */
+function renderCart() {
+  const rows = cart.map((c, i) => ({ c, i, p: products.find(x => x.id === c.id) })).filter(r => r.p);
+  if (!rows.length) { $("#main").innerHTML = `<div class="empty">${ic("cart")}<br>Your cart is empty</div>`; return; }
+  const total = rows.reduce((a, r) => a + r.p.price * r.c.qty, 0);
+  const keep = { n: ($("#oName") || {}).value || "", p: ($("#oPhone") || {}).value || "", a: ($("#oAddr") || {}).value || "" };
+  $("#main").innerHTML = `<div class="sec"><h3>My cart</h3></div>
+  ${rows.map(({ c, i, p }) => `<div class="item"><div class="th" style="background-image:url('${p.img}')"></div>
+    <div class="info"><div style="font-weight:600">${esc(p.title)}</div><div class="meta">Size ${c.size}</div><div class="price">${money(p.price)}</div>
+    <div class="row" style="margin-top:6px;justify-content:space-between">
+      <div class="qty"><button onclick="chg(${i},-1)">-</button><b>${c.qty}</b><button onclick="chg(${i},1)">+</button></div>
+      <button class="sq" style="width:38px;height:38px" onclick="rm(${i})" aria-label="Remove">${ic("trash")}</button></div></div></div>`).join("")}
+  <div class="total"><span>Total</span><span style="color:var(--g)">${money(total)}</span></div>
+  <div class="sec"><h3>Delivery details</h3></div>
+  <label class="field"><span>Full name</span><input id="oName" placeholder="Your name" autocomplete="name"></label>
+  <label class="field"><span>Phone number</span><input id="oPhone" type="tel" placeholder="01XXXXXXXXX" autocomplete="tel"></label>
+  <label class="field"><span>Address</span><textarea id="oAddr" rows="3" placeholder="House, road, area, city"></textarea></label>
+  <button class="btn" onclick="placeOrder()">Place order</button>`;
+  $("#oName").value = keep.n; $("#oPhone").value = keep.p; $("#oAddr").value = keep.a;
+}
+function chg(i, d) { cart[i].qty = Math.max(1, cart[i].qty + d); save("zj_cart", cart); render(); }
+function rm(i) { cart.splice(i, 1); save("zj_cart", cart); render(); }
+function placeOrder() {
+  const name = $("#oName").value.trim(), phone = $("#oPhone").value.trim(), addr = $("#oAddr").value.trim();
+  if (!name || !phone || !addr) return toast("Fill in all fields");
+  if (!/^[0-9+\- ]{8,15}$/.test(phone)) return toast("Enter a valid phone number");
+  if (!db) return toast("Firebase is not configured");
+  const items = cart.map(c => { const p = products.find(x => x.id === c.id); return p ? { title: p.title, img: p.img, price: p.price, size: c.size, qty: c.qty } : null; }).filter(Boolean);
+  if (!items.length) return toast("Your cart is empty");
+  const total = items.reduce((a, i) => a + i.price * i.qty, 0);
+  db.ref("orders").push({ name, phone, address: addr, items, total, status: "new", ts: Date.now() })
+    .then(() => { cart = []; save("zj_cart", cart); toast("Order placed!"); go("home"); })
+    .catch(() => toast("Could not place order"));
+}
+
+/* User chat with photo sharing */
+function msgHTML(m, mine) {
+  return `<div class="msg ${mine ? "me" : "them"}">${m.text ? esc(m.text) : ""}${m.img ? `<img src="${m.img}" class="msg-img" alt="" onclick="viewImg(this.src)">` : ""}</div>`;
+}
+function renderChat() {
+  const old = $("#ci"), keep = old ? old.value : "", focused = old && document.activeElement === old;
+  $("#main").innerHTML = `<div class="sec"><h3>Chat with zjon</h3></div>
+  <div class="chat" id="cl">${chatMsgs.length ? chatMsgs.map(m => msgHTML(m, m.from === "user")).join("") : `<div class="empty">${ic("chat")}<br>Ask us anything about your order</div>`}</div>
+  <div class="compose">
+    <label class="cam-btn"><input type="file" accept="image/*" hidden onchange="sendChatImg(this, 'user')">${ic("cam")}</label>
+    <input id="ci" type="text" placeholder="Type a message" onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="send-btn" onclick="sendChat()" aria-label="Send">${ic("send")}</button>
+  </div>`;
+  const ci = $("#ci"); ci.value = keep; if (focused) ci.focus();
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+function sendChat() {
+  const i = $("#ci"), t = i.value.trim(); if (!t) return;
+  if (!db) return toast("Firebase is not configured");
+  const ts = Date.now();
+  db.ref("chats/" + uid).push({ from: "user", text: t, ts });
+  db.ref("threads/" + uid).set({ last: t, ts, from: "user" }).catch(dbError);
+  i.value = "";
+}
+
+function sendChatImg(inp, role) {
+  const f = inp.files[0]; if (!f) return;
+  if (!db) return toast("Firebase is not configured");
+  const target = role === "admin" ? (aChat && aChat.id) : uid;
+  if (!target) return;
+  compressImg(f, 800, base64 => {
+    const ts = Date.now();
+    db.ref("chats/" + target).push({ from: role, img: base64, ts });
+    db.ref("threads/" + target).set({ last: "Photo", ts, from: role });
+  });
+  inp.value = "";
+}
+
+function compressImg(file, maxPx, cb) {
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const k = Math.min(1, maxPx / Math.max(im.width, im.height));
+      const c = document.createElement("canvas"); c.width = im.width * k; c.height = im.height * k;
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.72));
+    };
+    im.onerror = () => toast("Could not read this image");
+    im.src = r.result;
+  };
+  r.readAsDataURL(file);
+}
+
+/* Admin panel */
+let aTab = "products", aOrders = [], aThreads = [], aChat = null, aImg = "", aAdImg = "", aListening = false;
+function openAdmin() { $("#admin").classList.add("show"); sessionStorage.getItem("zj_adm") ? drawAdmin() : drawLogin(); }
+function closeAdmin() { $("#admin").classList.remove("show"); }
+function drawLogin() {
+  $("#admin").innerHTML = `<div class="login"><div class="box">
+    <div class="logo" style="font-size:44px">zjon</div><p style="color:var(--mut);margin:4px 0 22px;font-weight:600">Admin login</p>
+    <label class="field"><span>Username</span><input id="au" autocomplete="username" autocapitalize="off"></label>
+    <label class="field"><span>Password</span><input id="ap" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></label>
+    <button class="btn" onclick="doLogin()">Log in</button>
+    <button class="btn alt" style="margin-top:10px" onclick="closeAdmin()">Back to shop</button></div></div>`;
+}
+function doLogin() {
+  if ($("#au").value.trim() === ADMIN_USER && $("#ap").value === ADMIN_PASS) { sessionStorage.setItem("zj_adm", "1"); drawAdmin(); }
+  else toast("Wrong username or password");
+}
+function logout() { sessionStorage.removeItem("zj_adm"); closeAdmin(); }
+
+function drawAdmin() {
+  if (db && !aListening) {
+    aListening = true;
+    db.ref("orders").on("value", s => { aOrders = Object.entries(s.val() || {}).map(([id, o]) => ({ id, ...o })).sort((a, b) => b.ts - a.ts); if (aTab === "orders" && adminOpen()) drawTab(); }, dbError);
+    db.ref("threads").on("value", s => { aThreads = Object.entries(s.val() || {}).map(([id, t]) => ({ id, ...t })).sort((a, b) => b.ts - a.ts); if (aTab === "messages" && !aChat && adminOpen()) drawTab(); }, dbError);
+  }
+  $("#admin").innerHTML = `<div class="adm">
+    <div class="row" style="justify-content:space-between"><div class="logo">zjon admin</div>
+      <div class="row"><button class="sq" onclick="closeAdmin()" aria-label="Shop">${ic("home")}</button><button class="sq" onclick="logout()" aria-label="Log out">${ic("out")}</button></div></div>
+    <div class="tabs">
+      <button class="chip" data-t="products" onclick="aTab='products';aChat=null;drawTab()">${ic("box")} Products</button>
+      <button class="chip" data-t="ads" onclick="aTab='ads';aChat=null;drawTab()">${ic("img")} Banners</button>
+      <button class="chip" data-t="orders" onclick="aTab='orders';aChat=null;drawTab()">${ic("cart")} Orders</button>
+      <button class="chip" data-t="messages" onclick="aTab='messages';aChat=null;drawTab()">${ic("chat")} Messages</button>
+    </div><div id="atab"></div></div>`;
+  drawTab();
+}
+
+function drawTab() {
+  document.querySelectorAll(".tabs .chip").forEach(c => c.classList.toggle("on", c.dataset.t === aTab));
+  const el = $("#atab"); if (!el) return;
+  if (aTab !== "messages" && threadRef) { threadRef.off(); threadRef = null; }
+  if (aTab === "products") {
+    el.innerHTML = `<div class="sec"><h3>Add product</h3></div>
+    <label class="up" id="upBox" style="${aImg ? `background-image:url('${aImg}')` : ""}"><input type="file" accept="image/*" hidden onchange="pickImg(this, 'product')">${aImg ? "" : `<div>${ic("img")}<br>Tap to upload photo</div>`}</label>
+    <label class="field"><span>Title</span><input id="pT" placeholder="Slim fit cargo pant"></label>
+    <label class="field"><span>Caption</span><textarea id="pC" rows="3" placeholder="Fabric, fit, colors..."></textarea></label>
+    <div class="row"><label class="field" style="flex:1"><span>Price</span><input id="pP" type="number" inputmode="numeric"></label>
+    <label class="field" style="flex:1"><span>Old price (optional)</span><input id="pO" type="number" inputmode="numeric"></label></div>
+    <label class="field"><span>Category</span><select id="pK">${CATS.slice(1).map(c => `<option>${c}</option>`).join("")}</select></label>
+    <button class="btn" onclick="addProduct()">Publish product</button>
+    <div class="sec"><h3>All products (${products.length})</h3></div>
+    ${products.map(p => `<div class="item"><div class="th" style="background-image:url('${p.img}')"></div><div class="info"><div style="font-weight:600">${esc(p.title)}</div><div class="price">${money(p.price)}</div><div class="meta">${esc(p.cat)}</div></div>
+    <button class="sq" onclick="delProduct('${p.id}')" aria-label="Delete">${ic("trash")}</button></div>`).join("")}`;
+  } else if (aTab === "ads") {
+    el.innerHTML = `<div class="sec"><h3>Add home banner</h3></div>
+    <label class="up" id="adBox" style="${aAdImg ? `background-image:url('${aAdImg}')` : ""}"><input type="file" accept="image/*" hidden onchange="pickImg(this, 'ad')">${aAdImg ? "" : `<div>${ic("img")}<br>Tap to upload banner photo (optional)</div>`}</label>
+    <label class="field"><span>Banner title</span><input id="adT" placeholder="Flash sale 50% off"></label>
+    <label class="field"><span>Subtitle</span><input id="adS" placeholder="Grab your gear before midnight"></label>
+    <button class="btn" onclick="addAd()">Post banner</button>
+    <div class="sec"><h3>Active banners (${ads.length})</h3></div>
+    ${ads.map(a => `<div class="item"><div class="th" style="background:${a.img ? `url('${a.img}') center/cover` : "#222"}"></div>
+    <div class="info"><div style="font-weight:600">${esc(a.title)}</div><div class="meta">${esc(a.sub)}</div></div>
+    <button class="sq" onclick="delAd('${a.id}')" aria-label="Delete">${ic("trash")}</button></div>`).join("")}`;
+  } else if (aTab === "orders") {
+    el.innerHTML = `<div class="sec"><h3>Orders (${aOrders.length})</h3></div>` + (aOrders.length ? aOrders.map(o => `
+    <div class="item" style="display:block">
+      <div class="row" style="justify-content:space-between"><b>${esc(o.name)}</b><span class="pill" style="color:var(--g)">${esc(o.status)}</span></div>
+      <div class="meta">${esc(o.phone)}</div><div style="margin:6px 0;font-size:14px">${esc(o.address)}</div>
+      ${(o.items || []).map(i => `<div class="row" style="margin:6px 0"><div class="th" style="width:44px;height:44px;border-radius:8px;background:#222 url('${i.img}') center/cover"></div><div style="font-size:14px;flex:1">${esc(i.title)}<div class="meta">Size ${esc(i.size)} x ${i.qty}</div></div><b>${money(i.price * i.qty)}</b></div>`).join("")}
+      <div class="total" style="font-size:17px;margin:8px 0"><span>Total</span><span style="color:var(--g)">${money(o.total)}</span></div>
+      <div class="meta" style="margin-bottom:8px">${new Date(o.ts).toLocaleString()}</div>
+      <div class="row"><select class="field" style="flex:1;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px" onchange="setStatus('${o.id}',this.value)">
+        ${["new", "confirmed", "shipped", "delivered", "cancelled"].map(s => `<option ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}</select>
+      <button class="btn red sm" onclick="delOrder('${o.id}')">Delete</button></div></div>`).join("") : `<div class="empty">${ic("box")}<br>No orders yet</div>`);
+  } else if (aChat) drawThread();
+  else {
+    el.innerHTML = `<div class="sec"><h3>Messages (${aThreads.length})</h3></div>` + (aThreads.length ? aThreads.map(t => `
+    <div class="thread" onclick="openThread('${t.id}')"><div class="av">${esc(t.id.slice(1, 3).toUpperCase())}</div>
+    <div style="flex:1;min-width:0"><b>Guest ${esc(t.id.slice(1, 6))}</b><div class="meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.from === "admin" ? "You: " : "")}${esc(t.last)}</div></div>
+    <div class="meta">${new Date(t.ts).toLocaleDateString()}</div></div>`).join("") : `<div class="empty">${ic("chat")}<br>No messages yet</div>`);
+  }
+}
+
+function pickImg(inp, target) {
+  const f = inp.files[0]; if (!f) return;
+  compressImg(f, 800, base64 => {
+    if (target === "product") {
+      aImg = base64;
+      const b = $("#upBox"); if (b) { b.style.backgroundImage = `url('${aImg}')`; b.innerHTML = `<input type="file" accept="image/*" hidden onchange="pickImg(this, 'product')">`; }
+    } else {
+      aAdImg = base64;
+      const b = $("#adBox"); if (b) { b.style.backgroundImage = `url('${aAdImg}')`; b.innerHTML = `<input type="file" accept="image/*" hidden onchange="pickImg(this, 'ad')">`; }
+    }
+  });
+}
+
+function addProduct() {
+  const title = $("#pT").value.trim(), cap = $("#pC").value.trim(), price = +$("#pP").value, old = +$("#pO").value || 0, c = $("#pK").value;
+  if (!aImg) return toast("Upload a photo first");
+  if (!title || !price) return toast("Add a title and price");
+  if (!db) return toast("Firebase is not configured");
+  db.ref("products").push({ title, cap, price, old, cat: c, img: aImg, ts: Date.now() })
+    .then(() => { aImg = ""; toast("Product published"); drawTab(); })
+    .catch(() => toast("Upload failed"));
+}
+function delProduct(id) { if (confirm("Delete this product?")) db.ref("products/" + id).remove(); }
+
+function addAd() {
+  const title = $("#adT").value.trim(), sub = $("#adS").value.trim();
+  if (!title && !aAdImg) return toast("Add a title or upload an image");
+  if (!db) return toast("Firebase is not configured");
+  db.ref("ads").push({ title, sub, img: aAdImg, ts: Date.now() })
+    .then(() => { aAdImg = ""; toast("Banner posted"); drawTab(); })
+    .catch(() => toast("Failed to post banner"));
+}
+function delAd(id) { if (confirm("Delete this banner?")) db.ref("ads/" + id).remove(); }
+
+function setStatus(id, status) {
+  if (db) db.ref("orders/" + id).update({ status }).then(() => toast("Status updated")).catch(() => toast("Update failed"));
+}
+function delOrder(id) {
+  if (confirm("Delete this order?")) db.ref("orders/" + id).remove();
+}
+
+function openThread(id) {
+  aChat = { id, msgs: [] };
+  if (threadRef) threadRef.off();
+  threadRef = db.ref("chats/" + id);
+  threadRef.on("value", s => {
+    if (!aChat) return;
+    aChat.msgs = Object.values(s.val() || {}).sort((a, b) => a.ts - b.ts);
+    if (aTab === "messages" && aChat && adminOpen()) drawThread();
+  }, dbError);
+}
+function closeThread() { aChat = null; if (threadRef) { threadRef.off(); threadRef = null; } drawTab(); }
+
+function drawThread() {
+  if (!aChat) return;
+  const old = $("#ar"), keep = old ? old.value : "", focused = old && document.activeElement === old;
+  $("#atab").innerHTML = `<div class="row" style="margin-bottom:12px"><button class="sq" onclick="closeThread()" aria-label="Back">${ic("back")}</button><b>Guest ${esc(aChat.id.slice(1, 6))}</b></div>
+  <div class="chat">${aChat.msgs.map(m => msgHTML(m, m.from === "admin")).join("")}</div>
+  <div class="compose" style="bottom:0">
+    <label class="cam-btn"><input type="file" accept="image/*" hidden onchange="sendChatImg(this, 'admin')">${ic("cam")}</label>
+    <input id="ar" type="text" placeholder="Write a reply" onkeydown="if(event.key==='Enter')sendReply()">
+    <button class="send-btn" onclick="sendReply()" aria-label="Send">${ic("send")}</button>
+  </div>`;
+  const ar = $("#ar"); if (ar) { ar.value = keep; if (focused) ar.focus(); }
+  const a = $("#admin"); if (a) a.scrollTop = a.scrollHeight;
+}
+
+function sendReply() {
+  const i = $("#ar"), t = i.value.trim(); if (!t || !aChat) return;
+  const ts = Date.now();
+  db.ref("chats/" + aChat.id).push({ from: "admin", text: t, ts });
+  db.ref("threads/" + aChat.id).set({ last: t, ts, from: "admin" });
+  i.value = "";
+}
+
+render();
+</script>
+</body>
+</html>
